@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import OpenAIStreamingCompletions
+import OpenAI
 
 struct ContentView: View {
     @State private var prompt = "what is internet explorer"
@@ -37,23 +37,17 @@ struct ContentView: View {
 
     private func complete() {
         if key == "" { return }
-        self.completion = try! OpenAIAPI(apiKey: key).completeStreaming(.init(prompt: prompt, max_tokens: 256))
+        self.completion = try! OpenAI(apiKey: key).completeStreaming(.init(prompt: prompt, max_tokens: 256))
     }
 
     private func completeChat() {
         if key == "" { return }
-        let messages: [OpenAIAPI.Message] = [
+        let messages: [OpenAI.Message] = [
             .init(role: .system, content: "You are a helpful assistant. Answer in one sentence if possible."),
             .init(role: .user, content: prompt)
         ]
-//        Task {
-//            do {
-//                self.completedText = try await OpenAIAPI(apiKey: key).completeChat(.init(messages: messages))
-//            } catch {
-//                self.completedText = "Error: \(error)"
-//            }
-//        }
-        self.completion = try! OpenAIAPI(apiKey: key).completeChatStreamingWithObservableObject(.init(messages: messages))
+
+        self.completion = try! OpenAI(apiKey: key).completeChatStreamingWithObservableObject(.init(messages: messages))
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OpenAIAPI {
+public struct OpenAI {
     var apiKey: String
     var orgId: String?
 
@@ -10,7 +10,7 @@ public struct OpenAIAPI {
     }
 }
 
-extension OpenAIAPI {
+extension OpenAI {
     enum Errors: Error {
         case noChoices
         case invalidResponse(String)

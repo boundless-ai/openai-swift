@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-extension OpenAIAPI {
+extension OpenAI {
     public struct CompletionRequest: Codable {
         var prompt: String
         var model = "text-davinci-003"

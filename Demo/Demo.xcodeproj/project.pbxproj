@@ -3,15 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D27E9C72AC1E0E1004101E1 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 5D27E9C62AC1E0E1004101E1 /* OpenAI */; };
 		5F43D6DA29A87180002752A0 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F43D6D929A87180002752A0 /* DemoApp.swift */; };
 		5F43D6DC29A87180002752A0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F43D6DB29A87180002752A0 /* ContentView.swift */; };
 		5F43D6DE29A87181002752A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F43D6DD29A87181002752A0 /* Assets.xcassets */; };
 		5F43D6E129A87181002752A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F43D6E029A87181002752A0 /* Preview Assets.xcassets */; };
-		5F43D6F329A8730F002752A0 /* OpenAIStreamingCompletions in Frameworks */ = {isa = PBXBuildFile; productRef = 5F43D6F229A8730F002752A0 /* OpenAIStreamingCompletions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,7 +21,6 @@
 		5F43D6DD29A87181002752A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5F43D6E029A87181002752A0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5F43D6ED29A87266002752A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		5F43D6EF29A87302002752A0 /* openai-streaming-completions-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "openai-streaming-completions-swift"; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,7 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F43D6F329A8730F002752A0 /* OpenAIStreamingCompletions in Frameworks */,
+				5D27E9C72AC1E0E1004101E1 /* OpenAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,7 +38,6 @@
 		5F43D6CD29A87180002752A0 = {
 			isa = PBXGroup;
 			children = (
-				5F43D6EE29A87302002752A0 /* Packages */,
 				5F43D6D829A87180002752A0 /* Demo */,
 				5F43D6D729A87180002752A0 /* Products */,
 				5F43D6EA29A87256002752A0 /* Frameworks */,
@@ -81,14 +79,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5F43D6EE29A87302002752A0 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				5F43D6EF29A87302002752A0 /* openai-streaming-completions-swift */,
-			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -107,7 +97,7 @@
 			);
 			name = Demo;
 			packageProductDependencies = (
-				5F43D6F229A8730F002752A0 /* OpenAIStreamingCompletions */,
+				5D27E9C62AC1E0E1004101E1 /* OpenAI */,
 			);
 			productName = Demo;
 			productReference = 5F43D6D629A87180002752A0 /* Demo.app */;
@@ -137,6 +127,9 @@
 				Base,
 			);
 			mainGroup = 5F43D6CD29A87180002752A0;
+			packageReferences = (
+				5D27E9C52AC1E0E1004101E1 /* XCLocalSwiftPackageReference ".." */,
+			);
 			productRefGroup = 5F43D6D729A87180002752A0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -300,7 +293,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
-				DEVELOPMENT_TEAM = VPN8ZW6EAC;
+				DEVELOPMENT_TEAM = KJWX9V9649;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Demo/Info.plist;
@@ -330,7 +323,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
-				DEVELOPMENT_TEAM = VPN8ZW6EAC;
+				DEVELOPMENT_TEAM = KJWX9V9649;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Demo/Info.plist;
@@ -375,12 +368,19 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCSwiftPackageProductDependency section */
-		5F43D6F029A8730C002752A0 /* OpenAIStreamingCompletions */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = OpenAIStreamingCompletions;
+/* Begin XCLocalSwiftPackageReference section */
+		5D27E9C52AC1E0E1004101E1 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
 		};
-		5F43D6F229A8730F002752A0 /* OpenAIStreamingCompletions */ = {
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5D27E9C62AC1E0E1004101E1 /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpenAI;
+		};
+		5F43D6F029A8730C002752A0 /* OpenAIStreamingCompletions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = OpenAIStreamingCompletions;
 		};

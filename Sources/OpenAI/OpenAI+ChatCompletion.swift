@@ -1,6 +1,6 @@
 import Foundation
 
-extension OpenAIAPI {
+extension OpenAI {
     public struct Message: Equatable, Codable, Hashable {
         public enum Role: String, Equatable, Codable, Hashable {
             case system
