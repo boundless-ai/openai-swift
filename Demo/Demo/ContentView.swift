@@ -10,8 +10,7 @@ import OpenAI
 
 struct ContentView: View {
     @State private var prompt = "what is internet explorer"
-    @State private var completion: StreamingCompletion?
-    @State private var completedText: String = ""
+    @State private var text: String = ""
     @AppStorage("key") private var key = ""
 
     var body: some View {
@@ -22,14 +21,11 @@ struct ContentView: View {
                 Button("Complete Text", action: complete)
                 Button("Complete Chat", action: completeChat)
             }
-            if let completion {
+            if text != "" {
                 Section {
-                    CompletionView(completion: completion)
-                }
-            }
-            if completedText != "" {
-                Section {
-                    Text(completedText)
+                    Text(text)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(nil)
                 }
             }
         }
@@ -37,7 +33,6 @@ struct ContentView: View {
 
     private func complete() {
         if key == "" { return }
-        self.completion = try! OpenAI(apiKey: key).completeStreaming(.init(prompt: prompt, max_tokens: 256))
     }
 
     private func completeChat() {
@@ -47,23 +42,16 @@ struct ContentView: View {
             .init(role: .user, content: prompt)
         ]
 
-        self.completion = try! OpenAI(apiKey: key).completeChatStreamingWithObservableObject(.init(messages: messages))
-    }
-}
-
-private struct CompletionView: View {
-    @ObservedObject var completion: StreamingCompletion
-
-    var body: some View {
-        Group {
-            Text("\(completion.text)")
-                .multilineTextAlignment(.leading)
-                .lineLimit(nil)
-        }
-        switch completion.status {
-        case .error: Text("Errror")
-        case .complete: Text("Complete")
-        case .loading: Text("Loading")
+        let openAI = OpenAI(apiKey: key)
+        let stream = try! openAI.completeChatStreaming(.init(messages: messages))
+        Task {
+            do {
+                for try await response in stream {
+                    text = response.content
+                }
+            } catch let error {
+                print(error.localizedDescription)
+            }
         }
     }
 }
