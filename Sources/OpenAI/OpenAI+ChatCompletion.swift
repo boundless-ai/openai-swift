@@ -69,6 +69,11 @@ extension OpenAI {
             var message = Message(role: .assistant, content: "")
 
             src.onComplete { statusCode, reconnect, error in
+                if let statusCode,
+                   let apiError = APIError(rawValue: statusCode) {
+                    continuation.finish(throwing: apiError)
+                }
+
                 continuation.finish(throwing: error)
             }
 
