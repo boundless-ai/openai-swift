@@ -43,8 +43,8 @@ extension OpenAI {
         var choices: [Choice]
     }
 
-    public func completeChat(_ completionRequest: ChatCompletionRequest) async throws -> String {
-        let request = try createChatRequest(completionRequest: completionRequest)
+    public func completeChat(_ completionRequest: ChatCompletionRequest, apiURL url: URL = URL(string: "https://api.openai.com/v1/chat/completions")!) async throws -> String {
+        let request = try createChatRequest(completionRequest: completionRequest, apiURL: url)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw Errors.invalidResponse(String(data: data, encoding: .utf8) ?? "<failed to decode response>")
@@ -58,10 +58,10 @@ extension OpenAI {
 
     // MARK: - Streaming completion
 
-    public func completeChatStreaming(_ completionRequest: ChatCompletionRequest) throws -> AsyncThrowingStream<Message, Error> {
+    public func completeChatStreaming(_ completionRequest: ChatCompletionRequest, apiURL url: URL = URL(string: "https://api.openai.com/v1/chat/completions")!) throws -> AsyncThrowingStream<Message, Error> {
         var cr = completionRequest
         cr.stream = true
-        let request = try createChatRequest(completionRequest: cr)
+        let request = try createChatRequest(completionRequest: cr, apiURL: url)
 
         return AsyncThrowingStream { continuation in
             let src = EventSource(urlRequest: request)
@@ -119,8 +119,7 @@ extension OpenAI {
         return json.choices.first?.delta.content
     }
     
-    private func createChatRequest(completionRequest: ChatCompletionRequest) throws -> URLRequest {
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+    private func createChatRequest(completionRequest: ChatCompletionRequest, apiURL url: URL) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")

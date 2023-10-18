@@ -43,14 +43,14 @@ struct ContentView: View {
         ]
 
         let openAI = OpenAI(apiKey: key)
-        let stream = try! openAI.completeChatStreaming(.init(messages: messages))
+        let stream = try! openAI.completeChatStreaming(.init(messages: messages), apiURL: URL(string: "http://127.0.0.1:5000/chat_completion")!)
         Task {
             do {
                 for try await response in stream {
                     text = response.content
                 }
             } catch let error {
-                print(error.localizedDescription)
+                print(error)
             }
         }
     }
