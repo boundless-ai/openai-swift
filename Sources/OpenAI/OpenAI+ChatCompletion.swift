@@ -101,27 +101,6 @@ extension OpenAI {
         }
     }
 
-    public func completeChatStreamingWithObservableObject(_ completionRequest: ChatCompletionRequest) throws -> StreamingCompletion {
-        let completion = StreamingCompletion()
-        Task {
-            do {
-                for try await message in try self.completeChatStreaming(completionRequest) {
-                    DispatchQueue.main.async {
-                        completion.text = message.content
-                    }
-                }
-                DispatchQueue.main.async {
-                    completion.status = .complete
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion.status = .error
-                }
-            }
-        }
-        return completion
-    }
-
     private struct ChatCompletionStreamingResponse: Codable {
         struct Choice: Codable {
             struct MessageDelta: Codable {
