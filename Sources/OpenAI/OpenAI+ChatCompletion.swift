@@ -74,7 +74,9 @@ extension OpenAI {
                         continuation.finish(throwing: apiError)
                     }
 
-                    continuation.finish(throwing: NSError(domain: "unknown error", code: statusCode))
+                    if statusCode != 200 {
+                        continuation.finish(throwing: NSError(domain: "unknown error", code: statusCode))
+                    }
                 }
 
                 continuation.finish(throwing: error)
