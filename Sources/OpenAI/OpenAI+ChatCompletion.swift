@@ -1,4 +1,7 @@
 import Foundation
+import CoreGraphics
+import ImageIO
+import CoreServices
 
 extension OpenAI {
     public struct Message: Equatable, Codable, Hashable {
@@ -8,10 +11,54 @@ extension OpenAI {
             case assistant
         }
 
-        public var role: Role
-        public var content: String
+        public enum ContentBlock: Codable, Equatable, Hashable {
+            case text(String)
+            case image(CGImage)
 
-        public init(role: Role, content: String) {
+            enum CodingKeys: CodingKey {
+                case type, text, image_url
+            }
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                if let textValue = try? container.decode(String.self, forKey: .text) {
+                    self = .text(textValue)
+                } else if let imageDataString = try? container.decode(String.self, forKey: .image_url)
+                    .replacingOccurrences(of: "data:image/jpeg;base64,", with: ""),
+                          let imageData = Data(base64Encoded: imageDataString),
+                          let dataProvider = CGDataProvider(data: imageData as CFData),
+                          let image = CGImage(jpegDataProviderSource: dataProvider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) {
+                    self = .image(image)
+                } else {
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Unable to decode enum."))
+                }
+            }
+
+            public func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                switch self {
+                case .text(let textValue):
+                    try container.encode("text", forKey: .type)
+                    try container.encode(textValue, forKey: .text)
+                case .image(let cgImage):
+                    try container.encode("image_url", forKey: .type)
+
+                    let mutableData = CFDataCreateMutable(nil, 0)!
+                    let destination = CGImageDestinationCreateWithData(mutableData, kUTTypeJPEG, 1, nil)!
+                    CGImageDestinationAddImage(destination, cgImage, nil)
+                    CGImageDestinationFinalize(destination)
+                    let jpegData = mutableData as Data
+
+                    try container.encode("data:image/jpeg;base64,\(jpegData.base64EncodedString())", forKey: .image_url)
+                }
+            }
+        }
+
+
+        public var role: Role
+        public var content: [ContentBlock]
+
+        public init(role: Role, content: [ContentBlock]) {
             self.role = role
             self.content = content
         }
@@ -53,7 +100,12 @@ extension OpenAI {
         guard completionResponse.choices.count > 0 else {
             throw Errors.noChoices
         }
-        return completionResponse.choices[0].message.content
+
+        if case let .text(content) = completionResponse.choices[0].message.content[0] {
+            return content
+        } else {
+            throw Errors.noChoices
+        }
     }
 
     // MARK: - Streaming completion
@@ -66,7 +118,7 @@ extension OpenAI {
         return AsyncThrowingStream { continuation in
             let src = EventSource(urlRequest: request)
 
-            var message = Message(role: .assistant, content: "")
+            var message = Message(role: .assistant, content: [.text("")])
 
             src.onComplete { statusCode, reconnect, error in
                 if let statusCode {
@@ -95,7 +147,11 @@ extension OpenAI {
                     }
 
                     message.role = delta.role ?? message.role
-                    message.content += delta.content ?? ""
+                    if case let .text(currentContent) = message.content[0],
+                       let deltaContent = delta.content {
+                       message.content = [.text(currentContent + deltaContent)]
+                    }
+
                     continuation.yield(message)
                 } catch let error {
                     continuation.yield(with: .failure(error))
@@ -133,6 +189,12 @@ extension OpenAI {
             request.setValue(orgId, forHTTPHeaderField: "OpenAI-Organization")
         }
         request.httpBody = try JSONEncoder().encode(completionRequest)
+
+        if let data = request.httpBody,
+         let jsonString = String(data: data, encoding: .utf8) {
+            print(jsonString)
+        }
+
         return request
     }
 }

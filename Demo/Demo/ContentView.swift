@@ -38,16 +38,20 @@ struct ContentView: View {
     private func completeChat() {
         if key == "" { return }
         let messages: [OpenAI.Message] = [
-            .init(role: .system, content: "You are a helpful assistant. Answer in one sentence if possible."),
-            .init(role: .user, content: prompt)
+            .init(role: .system, content: [.text("You are a helpful assistant. Answer in one sentence if possible.")]),
+            .init(role: .user, content: [.text(prompt)])
         ]
 
+        let chatRequest = OpenAI.ChatCompletionRequest(messages: messages, model: "gpt-4")
+
         let openAI = OpenAI(apiKey: key)
-        let stream = try! openAI.completeChatStreaming(.init(messages: messages), apiURL: URL(string: "http://127.0.0.1:5000/chat_completion")!)
+        let stream = try! openAI.completeChatStreaming(chatRequest)
         Task {
             do {
                 for try await response in stream {
-                    text = response.content
+                    if case let .text(content) = response.content[0] {
+                        text = content
+                    }
                 }
             } catch let error {
                 print(error)
