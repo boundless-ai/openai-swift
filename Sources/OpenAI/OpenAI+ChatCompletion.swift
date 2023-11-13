@@ -189,12 +189,6 @@ extension OpenAI {
             request.setValue(orgId, forHTTPHeaderField: "OpenAI-Organization")
         }
         request.httpBody = try JSONEncoder().encode(completionRequest)
-
-        if let data = request.httpBody,
-         let jsonString = String(data: data, encoding: .utf8) {
-            print(jsonString)
-        }
-
         return request
     }
 }
