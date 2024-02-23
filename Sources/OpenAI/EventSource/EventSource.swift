@@ -175,8 +175,9 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
             mainQueue.async { [weak self] in self?.onComplete?(nil, nil, error as NSError?) }
             return
         }
-
-        let reconnect = shouldReconnect(statusCode: responseStatusCode)
+        
+        let isConnectionLostError = (error as? NSError)?.code == -1005
+        let reconnect = shouldReconnect(statusCode: responseStatusCode) || isConnectionLostError
         mainQueue.async { [weak self] in self?.onComplete?(responseStatusCode, reconnect, nil) }
     }
 
