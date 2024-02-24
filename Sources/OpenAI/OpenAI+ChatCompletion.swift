@@ -61,6 +61,7 @@ extension OpenAI {
     public func completeChatStreaming(_ completionRequest: ChatCompletionRequest, apiURL url: URL = URL(string: "https://api.openai.com/v1/chat/completions")!) throws -> AsyncThrowingStream<Message, Error> {
         var cr = completionRequest
         cr.stream = true
+        cr.messages.append(Message(role: .assistant, content: ""))
         let request = try createChatRequest(completionRequest: cr, apiURL: url)
 
         return AsyncThrowingStream { continuation in
@@ -70,6 +71,11 @@ extension OpenAI {
 
             src.onComplete { statusCode, reconnect, error in
                 if reconnect == true {
+                    message.content = message.content.trimmingCharacters(in: .whitespaces) + " "
+                    cr.messages[cr.messages.count - 1].content = message.content
+                    let request = try! createChatRequest(completionRequest: cr, apiURL: url)
+                    src.urlRequest.httpBody = request.httpBody
+                    
                     return src.connect()
                 }
                 

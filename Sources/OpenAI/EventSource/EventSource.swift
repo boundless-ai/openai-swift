@@ -76,7 +76,7 @@ public protocol EventSourceProtocol {
 open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     static let DefaultRetryTime = 3000
 
-    public let urlRequest: URLRequest
+    public var urlRequest: URLRequest
     public var url: URL { urlRequest.url! }
     private(set) public var lastEventId: String?
     private(set) public var retryTime = EventSource.DefaultRetryTime
