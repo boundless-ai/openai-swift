@@ -70,7 +70,7 @@ extension OpenAI {
 
             src.onComplete { statusCode, reconnect, error in
                 if reconnect == true {
-                    return src.connect()
+                    return src.connect(lastEventId: src.lastEventId)
                 }
                 
                 if let statusCode {
